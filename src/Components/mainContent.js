@@ -1,13 +1,16 @@
-import React from 'react';
-import Typography from '@material-ui/core/Typography';
+import React, { useEffect, useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
+import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
+import { Link } from 'react-router-dom';
+import fetchVideos from '../actions/fetchVideos';
+import MovieCard from './movieCard';
 
 const useStyles = makeStyles((theme) => ({
     toolbar: {
         width: '100%',
         height: '40px',
         maxHeight: '40px',
-
         display: 'grid',
         gridTemplateColumns: 'auto 1fr',
 
@@ -18,46 +21,81 @@ const useStyles = makeStyles((theme) => ({
     content: {
         flexGrow: 1,
         padding: theme.spacing(3),
+        paddingLeft: theme.spacing(7) + 40,
+    },
+    videoContainer: {
+        display: 'grid',
+        gridTemplateColumns: 'repeat(auto-fit,minmax(275px,1fr))',
+        color: 'blue',
+        gap: '10px',
     },
 }));
 
-export default function MainContent() {
+function MainContent({ videos, channels, fetchVideosProp, statistics }) {
     const classes = useStyles();
+    const [videosArr, setVideosArr] = useState([]);
+    const [channelArr, setChannelArr] = useState([]);
+    const [statisticsArr, setStatisticsArr] = useState([]);
+
+    useEffect(() => {
+        fetchVideosProp();
+    }, []);
+
+    useEffect(() => {
+        if (videos.length && channels.length && statistics.length) {
+            setVideosArr(videos);
+            setChannelArr(channels);
+            setStatisticsArr(statistics);
+        }
+    }, [videos, channels, statistics]);
 
     return (
         <main className={classes.content}>
             <div className={classes.toolbar} />
-            <Typography paragraph>
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-                eiusmod tempor incididunt ut labore et dolore magna aliqua.
-                Rhoncus dolor purus non enim praesent elementum facilisis leo
-                vel. Risus at ultrices mi tempus imperdiet. Semper risus in
-                hendrerit gravida rutrum quisque non tellus. Convallis convallis
-                tellus id interdum velit laoreet id donec ultrices. Odio morbi
-                quis commodo odio aenean sed adipiscing. Amet nisl suscipit
-                adipiscing bibendum est ultricies integer quis. Cursus euismod
-                quis viverra nibh cras. Metus vulputate eu scelerisque felis
-                imperdiet proin fermentum leo. Mauris commodo quis imperdiet
-                massa tincidunt. Cras tincidunt lobortis feugiat vivamus at
-                augue. At augue eget arcu dictum varius duis at consectetur
-                lorem. Velit sed ullamcorper morbi tincidunt. Lorem donec massa
-                sapien faucibus et molestie ac.
-            </Typography>
-            <Typography paragraph>
-                Consequat mauris nunc congue nisi vitae suscipit. Fringilla est
-                ullamcorper eget nulla facilisi etiam dignissim diam. Pulvinar
-                elementum integer enim neque volutpat ac tincidunt. Ornare
-                suspendisse sed nisi lacus sed viverra tellus. Purus sit amet
-                volutpat consequat mauris. Elementum eu facilisis sed odio
-                morbi. Euismod lacinia at quis risus sed vulputate odio. Morbi
-                tincidunt ornare massa eget egestas purus viverra accumsan in.
-                In hendrerit gravida rutrum quisque non tellus orci ac.
-                Pellentesque nec nam aliquam sem et tortor. Habitant morbi
-                tristique senectus et. Adipiscing elit duis tristique
-                sollicitudin nibh sit. Ornare aenean euismod elementum nisi quis
-                eleifend. Commodo viverra maecenas accumsan lacus vel facilisis.
-                Nulla posuere sollicitudin aliquam ultrices sagittis orci a.
-            </Typography>
+            <div className={classes.videoContainer}>
+                {videosArr.map((videoObj) => {
+                    const channel = channelArr.filter(
+                        (channelObj) =>
+                            channelObj.id === videoObj.snippet.channelId
+                    );
+
+                    const stat = statisticsArr.filter(
+                        (statObj) => statObj.id === videoObj.id
+                    );
+
+                    return (
+                        <Link to={`/watch?v=${videoObj.id}`}>
+                            {' '}
+                            <MovieCard
+                                videoObj={videoObj}
+                                key={videoObj.id}
+                                channel={channel[0]}
+                                stat={stat[0]}
+                            />
+                        </Link>
+                    );
+                })}
+            </div>
         </main>
     );
 }
+
+MainContent.propTypes = {
+    videos: PropTypes.arrayOf.isRequired,
+    fetchVideosProp: PropTypes.func.isRequired,
+    channels: PropTypes.arrayOf.isRequired,
+    statistics: PropTypes.arrayOf.isRequired,
+};
+
+const mapStateToProps = (state) => ({
+    videos: state.videos,
+    channels: state.channelArr,
+    statistics: state.statisticsArr,
+});
+
+const mapDispatchToProps = (dispatch) => ({
+    fetchVideosProp: () => {
+        dispatch(fetchVideos());
+    },
+});
+export default connect(mapStateToProps, mapDispatchToProps)(MainContent);
