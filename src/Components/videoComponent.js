@@ -9,8 +9,16 @@ import ThumbUpAltOutlinedIcon from '@material-ui/icons/ThumbUpAltOutlined';
 import ThumbDownAltOutlinedIcon from '@material-ui/icons/ThumbDownAltOutlined';
 import Button from '@material-ui/core/Button';
 import useQuery from './helpers/useQuery';
+import fetchComments from '../actions/fetchComments';
+import RecommendedVideos from './recommendedVid';
+import CommentsComponent from './commentsComponent';
 
-function VideoComponent({ videoArr, statisticsArr, channelArr }) {
+function VideoComponent({
+    videoArr,
+    statisticsArr,
+    channelArr,
+    fetchCommentsArr,
+}) {
     const query = useQuery();
     const videoID = query.get('v');
 
@@ -19,15 +27,30 @@ function VideoComponent({ videoArr, statisticsArr, channelArr }) {
     const [videoStat, setVideoStat] = useState({});
     const [channel, setChannel] = useState({});
 
-    useEffect(() => {
-        if (videoArr.length) {
-            setVideoObj(videoArr.find((video) => video.id === videoID));
-        }
-    }, [videoArr]);
+    const [videoData, setVideoData] = useState({ title: '', publishedAt: '' });
 
     useEffect(() => {
-        if (videoObj.snippet) {
+        fetchCommentsArr(videoID);
+    }, []);
+
+    useEffect(() => {
+        fetchCommentsArr(videoID);
+    }, [videoID]);
+
+    useEffect(() => {
+        if (videoArr.length && videoID) {
+            setVideoObj(videoArr.find((video) => video.id === videoID));
+        }
+    }, [videoArr, videoID]);
+
+    useEffect(() => {
+        if (videoObj && videoObj.snippet) {
             setVideoTags(videoObj.snippet.tags);
+
+            setVideoData({
+                title: videoObj.snippet.title,
+                publishedAt: videoObj.snippet.publishedAt,
+            });
         }
     }, [videoObj]);
 
@@ -35,17 +58,17 @@ function VideoComponent({ videoArr, statisticsArr, channelArr }) {
         if (statisticsArr.length) {
             setVideoStat(statisticsArr.find((obj) => obj.id === videoID));
         }
-    }, [statisticsArr]);
+    }, [statisticsArr, videoID]);
 
     useEffect(() => {
-        if (channelArr.length) {
+        if (channelArr.length && videoObj && Object.keys(videoObj).length) {
             setChannel(
                 channelArr.find(
                     (channelObj) => channelObj.id === videoObj.snippet.channelId
                 )
             );
         }
-    }, [channelArr]);
+    }, [channelArr, videoObj]);
 
     return (
         <div
@@ -63,21 +86,20 @@ function VideoComponent({ videoArr, statisticsArr, channelArr }) {
                     width="100%"
                     height="480"
                     autoPlay=""
-                    src={`https://www.youtube.com/embed/${videoObj.id}?autoplay=1`}
+                    src={`https://www.youtube.com/embed/${videoID}?autoplay=1`}
                     frameBorder="0"
                     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                     allowFullScreen=""
                     style={{ marginBottom: '0.5em' }}
                 />
                 <p style={{ color: '#0660D4', margin: '0px' }}>
-                    {videoTags
-                        .map((tag) => `#${tag}`)
-                        .slice(0, 4)
-                        .join(' ')}
+                    {videoTags &&
+                        videoTags
+                            .map((tag) => `#${tag}`)
+                            .slice(0, 4)
+                            .join(' ')}
                 </p>
-                <h2 style={{ margin: '0px' }}>
-                    {videoObj.snippet && videoObj.snippet.title}
-                </h2>
+                <h2 style={{ margin: '0px' }}>{videoData.title}</h2>
                 <p style={{ margin: '0.5em' }}>
                     <span style={{ margin: '0' }}>
                         {videoStat &&
@@ -86,9 +108,7 @@ function VideoComponent({ videoArr, statisticsArr, channelArr }) {
                         views
                     </span>
                     <span style={{ color: 'black' }}> • </span>
-                    <Moment fromNow>
-                        {videoObj.snippet && videoObj.snippet.publishedAt}
-                    </Moment>
+                    <Moment fromNow>{videoData.publishedAt}</Moment>
                 </p>
                 <div
                     style={{
@@ -215,16 +235,13 @@ function VideoComponent({ videoArr, statisticsArr, channelArr }) {
                                     channel.snippet &&
                                     channel.snippet.title}
                             </h3>
-                            <p>
-                                {videoObj &&
-                                    videoObj.snippet &&
-                                    videoObj.snippet.title}
-                            </p>
+                            <p>{videoData.title}</p>
                             <p style={{ color: '#0660D4', margin: '0px' }}>
-                                {videoTags
-                                    .map((tag) => `#${tag}`)
-                                    .slice(0, 4)
-                                    .join(' ')}
+                                {videoTags &&
+                                    videoTags
+                                        .map((tag) => `#${tag}`)
+                                        .slice(0, 4)
+                                        .join(' ')}
                             </p>
                             <p>SHOW MORE</p>
                         </div>
@@ -247,9 +264,12 @@ function VideoComponent({ videoArr, statisticsArr, channelArr }) {
                         style={{
                             width: '100%',
                             display: 'grid',
-                            gridTemplateColumns: 'auto 1fr',
+                            gridTemplateColumns: '5% 1fr',
 
                             alignItems: 'center',
+                            gap: '20px',
+                            rowGap: '20px',
+                            height: '50px',
                         }}
                     >
                         <div
@@ -278,12 +298,23 @@ function VideoComponent({ videoArr, statisticsArr, channelArr }) {
                                 }}
                             />
                         </div>
-                        <input type="text" style={{ width: '100%' }} />
+                        <input
+                            type="text"
+                            style={{
+                                width: '100%',
+                                outline: 'none',
+                                border: 'none',
+                                padding: '1em',
+                                backgroundColor: '#FAFAFA',
+                                borderBottom: '1px solid black',
+                            }}
+                        />
                     </div>
                 </div>
+                <CommentsComponent />
             </div>
 
-            <div style={{ width: '1fr', background: 'blue' }}>hi</div>
+            <RecommendedVideos />
         </div>
     );
 }
@@ -292,6 +323,7 @@ VideoComponent.propTypes = {
     videoArr: PropTypes.arrayOf.isRequired,
     statisticsArr: PropTypes.arrayOf.isRequired,
     channelArr: PropTypes.arrayOf.isRequired,
+    fetchCommentsArr: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = (state) => ({
@@ -300,4 +332,8 @@ const mapStateToProps = (state) => ({
     channelArr: state.channelArr,
 });
 
-export default connect(mapStateToProps)(VideoComponent);
+const mapDispatchToProps = (dispatch) => ({
+    fetchCommentsArr: (videoID) => dispatch(fetchComments(videoID)),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(VideoComponent);

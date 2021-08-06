@@ -12,6 +12,8 @@ import SettingsVoiceIcon from '@material-ui/icons/SettingsVoice';
 import VideoCallIcon from '@material-ui/icons/VideoCall';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
+import { Link, useHistory } from 'react-router-dom';
+import fetchUserSearch from '../actions/fetchUserSearch';
 
 const useStyles = makeStyles((theme) => ({
     appBar: {
@@ -90,9 +92,18 @@ const useStyles = makeStyles((theme) => ({
 
 function AppBarComponent({ dispatch }) {
     const classes = useStyles();
+    const history = useHistory();
+
+    const [searchInput, setSearchInput] = useState('');
 
     function toggleDrawer() {
         dispatch({ type: 'OPEN_SIDEBAR' });
+    }
+    function handleKeyDown(e) {
+        if (e.keyCode === 13) {
+            history.push(`/search/${searchInput}`);
+            dispatch(fetchUserSearch(searchInput));
+        }
     }
 
     return (
@@ -107,11 +118,13 @@ function AppBarComponent({ dispatch }) {
                     >
                         <MenuIcon />
                     </IconButton>
-                    <img
-                        src="media/youtube-logo.png"
-                        alt="youtube-logo"
-                        className={classes.headerImg}
-                    />
+                    <Link to="/">
+                        <img
+                            src="media/youtube-logo.png"
+                            alt="youtube-logo"
+                            className={classes.headerImg}
+                        />
+                    </Link>
                 </div>
                 <div className={classes.headerInputDiv}>
                     <div className={classes.inputDiv}>
@@ -119,9 +132,20 @@ function AppBarComponent({ dispatch }) {
                             type="text"
                             placeholder="Search.."
                             className={classes.input}
+                            value={searchInput}
+                            name="searchInput"
+                            onChange={(e) => {
+                                setSearchInput(e.target.value);
+                            }}
+                            onKeyDown={handleKeyDown}
                         />
                         <span style={{ cursor: 'pointer' }}>
-                            <SearchIcon />
+                            <SearchIcon
+                                onClick={() => {
+                                    history.push(`/search/${searchInput}`);
+                                    dispatch(fetchUserSearch(searchInput));
+                                }}
+                            />
                         </span>
                     </div>
                     <span className={classes.icons}>

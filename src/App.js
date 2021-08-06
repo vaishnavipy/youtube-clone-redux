@@ -8,6 +8,7 @@ import MainContent from './Components/mainContent';
 import VideoComponent from './Components/videoComponent';
 import AppBarComponent from './Components/appBar';
 import fetchVideos from './actions/fetchVideos';
+import SearchComponent from './Components/searchComponent';
 
 const root = {
     display: 'flex',
@@ -28,6 +29,9 @@ function App({ dispatch }) {
                 </Route>
                 <Route exact path="/watch">
                     <VideoComponent />
+                </Route>
+                <Route path="/search/:slug">
+                    <SearchComponent />
                 </Route>
             </Switch>
         </div>

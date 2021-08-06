@@ -3,6 +3,8 @@ const initState = {
     channelArr: [],
     statisticsArr: [],
     openSidebar: false,
+    commentsArr: [],
+    searchVideoArr: [],
 };
 
 export default function reducer(state = initState, action) {
@@ -23,6 +25,17 @@ export default function reducer(state = initState, action) {
             return {
                 ...state,
                 openSidebar: !state.openSidebar,
+            };
+        case 'FETCH_COMMENTS':
+            return {
+                ...state,
+                commentsArr: action.commentsArr,
+            };
+        case 'FETCH_USER_SEARCH':
+            console.log('user', action.searchVideoArr);
+            return {
+                ...state,
+                searchVideoArr: action.searchVideoArr,
             };
         default:
             return state;
