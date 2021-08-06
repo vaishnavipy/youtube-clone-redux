@@ -2,6 +2,7 @@ const initState = {
     videos: [],
     channelArr: [],
     statisticsArr: [],
+    openSidebar: false,
 };
 
 export default function reducer(state = initState, action) {
@@ -17,6 +18,11 @@ export default function reducer(state = initState, action) {
             return {
                 ...state,
                 statisticsArr: [...state.statisticsArr, ...action.statistics],
+            };
+        case 'OPEN_SIDEBAR':
+            return {
+                ...state,
+                openSidebar: !state.openSidebar,
             };
         default:
             return state;

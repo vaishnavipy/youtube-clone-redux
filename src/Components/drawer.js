@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import clsx from 'clsx';
 import Drawer from '@material-ui/core/Drawer';
@@ -11,6 +11,9 @@ import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import InboxIcon from '@material-ui/icons/MoveToInbox';
 import MailIcon from '@material-ui/icons/Mail';
+import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
+import useQuery from './helpers/useQuery';
 
 const drawerWidth = 240;
 
@@ -36,6 +39,7 @@ const useStyles = makeStyles((theme) => ({
         }),
         overflowX: 'hidden',
         width: theme.spacing(7) + 1,
+
         [theme.breakpoints.up('sm')]: {
             width: theme.spacing(9) + 1,
         },
@@ -58,9 +62,16 @@ const useStyles = makeStyles((theme) => ({
         alignSelf: 'center',
         objectFit: 'contain',
     },
+    hideDrawer: {
+        width: '0',
+        transition: theme.transitions.create('width', {
+            easing: theme.transitions.easing.sharp,
+            duration: theme.transitions.duration.leavingScreen,
+        }),
+    },
 }));
 
-export default function DrawerComponent() {
+function DrawerComponent({ openSidebar, handleToggleSidebar }) {
     const classes = useStyles();
     const [open, setOpen] = useState(false);
 
@@ -68,35 +79,61 @@ export default function DrawerComponent() {
         setOpen((prevState) => !prevState);
     };
 
+    const query = useQuery();
+
+    const drawerClass = clsx(classes.drawer, {
+        [classes.drawerOpen]: openSidebar,
+        [classes.hideDrawer]: !openSidebar,
+    });
+
+    const paperClass = {
+        paper: clsx({
+            [classes.drawerOpen]: openSidebar,
+            [classes.hideDrawer]: !openSidebar,
+        }),
+    };
+
     return (
         <Drawer
             variant="permanent"
-            className={clsx(classes.drawer, {
-                [classes.drawerOpen]: open,
-                [classes.drawerClose]: !open,
-            })}
-            classes={{
-                paper: clsx({
-                    [classes.drawerOpen]: open,
-                    [classes.drawerClose]: !open,
-                }),
-            }}
+            className={
+                query.get('v')
+                    ? drawerClass
+                    : clsx(classes.drawer, {
+                          [classes.drawerOpen]: open,
+                          [classes.drawerClose]: !open,
+                      })
+            }
+            classes={
+                query.get('v')
+                    ? paperClass
+                    : {
+                          paper: clsx({
+                              [classes.drawerOpen]: open,
+                              [classes.drawerClose]: !open,
+                          }),
+                      }
+            }
         >
             <div className={classes.toolbar}>
                 <IconButton
                     color="inherit"
                     aria-label="open drawer"
-                    onClick={toggleDrawer}
+                    onClick={
+                        query.get('v') ? handleToggleSidebar : toggleDrawer
+                    }
                     className={clsx(classes.menuButton)}
                 >
                     <MenuIcon />
                 </IconButton>
-                {open && (
+                {open || openSidebar ? (
                     <img
                         src="media/youtube-logo.png"
                         alt="youtube-logo"
                         className={classes.image}
                     />
+                ) : (
+                    ''
                 )}
             </div>
             <Divider />
@@ -130,3 +167,17 @@ export default function DrawerComponent() {
         </Drawer>
     );
 }
+
+DrawerComponent.propTypes = {
+    openSidebar: PropTypes.bool.isRequired,
+    handleToggleSidebar: PropTypes.func.isRequired,
+};
+
+const mapStateToProps = (state) => ({
+    openSidebar: state.openSidebar,
+});
+
+const mapDispatchToProps = (dispatch) => ({
+    handleToggleSidebar: () => dispatch({ type: 'OPEN_SIDEBAR' }),
+});
+export default connect(mapStateToProps, mapDispatchToProps)(DrawerComponent);

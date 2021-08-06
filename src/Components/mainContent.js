@@ -3,7 +3,6 @@ import { makeStyles } from '@material-ui/core/styles';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
-import fetchVideos from '../actions/fetchVideos';
 import MovieCard from './movieCard';
 
 const useStyles = makeStyles((theme) => ({
@@ -31,15 +30,11 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-function MainContent({ videos, channels, fetchVideosProp, statistics }) {
+function MainContent({ videos, channels, statistics }) {
     const classes = useStyles();
     const [videosArr, setVideosArr] = useState([]);
     const [channelArr, setChannelArr] = useState([]);
     const [statisticsArr, setStatisticsArr] = useState([]);
-
-    useEffect(() => {
-        fetchVideosProp();
-    }, []);
 
     useEffect(() => {
         if (videos.length && channels.length && statistics.length) {
@@ -64,7 +59,10 @@ function MainContent({ videos, channels, fetchVideosProp, statistics }) {
                     );
 
                     return (
-                        <Link to={`/watch?v=${videoObj.id}`}>
+                        <Link
+                            to={`/watch?v=${videoObj.id}`}
+                            style={{ textDecoration: 'none' }}
+                        >
                             {' '}
                             <MovieCard
                                 videoObj={videoObj}
@@ -82,7 +80,6 @@ function MainContent({ videos, channels, fetchVideosProp, statistics }) {
 
 MainContent.propTypes = {
     videos: PropTypes.arrayOf.isRequired,
-    fetchVideosProp: PropTypes.func.isRequired,
     channels: PropTypes.arrayOf.isRequired,
     statistics: PropTypes.arrayOf.isRequired,
 };
@@ -93,9 +90,4 @@ const mapStateToProps = (state) => ({
     statistics: state.statisticsArr,
 });
 
-const mapDispatchToProps = (dispatch) => ({
-    fetchVideosProp: () => {
-        dispatch(fetchVideos());
-    },
-});
-export default connect(mapStateToProps, mapDispatchToProps)(MainContent);
+export default connect(mapStateToProps)(MainContent);

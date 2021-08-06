@@ -4,14 +4,17 @@ import { makeStyles } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import AppsIcon from '@material-ui/icons/Apps';
+import IconButton from '@material-ui/core/IconButton';
+import MenuIcon from '@material-ui/icons/Menu';
 import NotificationsActiveIcon from '@material-ui/icons/NotificationsActive';
 import SearchIcon from '@material-ui/icons/Search';
 import SettingsVoiceIcon from '@material-ui/icons/SettingsVoice';
 import VideoCallIcon from '@material-ui/icons/VideoCall';
+import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
 
 const useStyles = makeStyles((theme) => ({
     appBar: {
-        paddingLeft: theme.spacing(7) + 1,
         zIndex: 0,
         transition: theme.transitions.create(['width', 'margin'], {
             easing: theme.transitions.easing.sharp,
@@ -33,12 +36,18 @@ const useStyles = makeStyles((theme) => ({
         backgroundColor: 'white',
         color: '#606060',
         display: 'grid',
-        gridTemplateColumns: '10% 1fr 11%',
+        gridTemplateColumns: '11% 1fr 10%',
+    },
+    headerLeftDiv: {
+        display: 'flex',
+        width: '100%',
+        height: '100%',
     },
 
     headerImg: {
-        width: '100%',
-        height: '50%',
+        paddingLeft: '5px',
+        width: '80%',
+        height: '90%',
         alignSelf: 'center',
         objectFit: 'contain',
     },
@@ -79,17 +88,31 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-export default function AppBarComponent() {
+function AppBarComponent({ dispatch }) {
     const classes = useStyles();
+
+    function toggleDrawer() {
+        dispatch({ type: 'OPEN_SIDEBAR' });
+    }
 
     return (
         <AppBar position="fixed" className={clsx(classes.appBar)}>
             <Toolbar className={classes.header}>
-                <img
-                    src="media/youtube-logo.png"
-                    alt="youtube-logo"
-                    className={classes.headerImg}
-                />
+                <div className={classes.headerLeftDiv}>
+                    <IconButton
+                        color="inherit"
+                        aria-label="open drawer"
+                        onClick={toggleDrawer}
+                        className={clsx(classes.menuButton)}
+                    >
+                        <MenuIcon />
+                    </IconButton>
+                    <img
+                        src="media/youtube-logo.png"
+                        alt="youtube-logo"
+                        className={classes.headerImg}
+                    />
+                </div>
                 <div className={classes.headerInputDiv}>
                     <div className={classes.inputDiv}>
                         <input
@@ -123,3 +146,9 @@ export default function AppBarComponent() {
         </AppBar>
     );
 }
+
+AppBarComponent.propTypes = {
+    dispatch: PropTypes.func.isRequired,
+};
+
+export default connect()(AppBarComponent);

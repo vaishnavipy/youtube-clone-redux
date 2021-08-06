@@ -8,7 +8,7 @@ export default function MovieCard({ videoObj, channel, stat }) {
     return (
         <div
             style={{
-                height: '250px',
+                height: '270px',
                 color: '#606060',
                 cursor: 'pointer',
             }}
@@ -55,13 +55,24 @@ export default function MovieCard({ videoObj, channel, stat }) {
                         }}
                     />
                 </div>
-                <div>
+                <div
+                    style={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                    }}
+                >
                     <p
                         style={{
                             margin: '0',
+
                             fontSize: '14px',
                             fontWeight: '900',
                             color: 'black',
+                            overflow: 'hidden',
+                            textOverflow: 'ellipsis',
+                            display: '-webkit-box',
+                            webkitLineClamp: '2',
+                            webkitBoxOrient: 'vertical',
                         }}
                     >
                         {title}
@@ -70,7 +81,7 @@ export default function MovieCard({ videoObj, channel, stat }) {
                         {channel && channel.snippet.title}
                     </p>
                     {stat && (
-                        <>
+                        <p style={{ margin: '0' }}>
                             <span style={{ margin: '0' }}>
                                 {stat.statistics.viewCount}
                             </span>
@@ -78,7 +89,7 @@ export default function MovieCard({ videoObj, channel, stat }) {
                             <span>
                                 <Moment fromNow>{publishedAt}</Moment>
                             </span>
-                        </>
+                        </p>
                     )}
                 </div>
             </div>

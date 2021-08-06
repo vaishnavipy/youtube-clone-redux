@@ -1,16 +1,22 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import CssBaseline from '@material-ui/core/CssBaseline';
+import Proptypes from 'prop-types';
+import { connect } from 'react-redux';
 import { Switch, Route } from 'react-router-dom';
 import DrawerComponent from './Components/drawer';
 import MainContent from './Components/mainContent';
 import VideoComponent from './Components/videoComponent';
 import AppBarComponent from './Components/appBar';
+import fetchVideos from './actions/fetchVideos';
 
 const root = {
     display: 'flex',
 };
 
-export default function App() {
+function App({ dispatch }) {
+    useEffect(() => {
+        dispatch(fetchVideos());
+    }, []);
     return (
         <div className={root}>
             <CssBaseline />
@@ -27,3 +33,9 @@ export default function App() {
         </div>
     );
 }
+
+App.propTypes = {
+    dispatch: Proptypes.func.isRequired,
+};
+
+export default connect()(App);
