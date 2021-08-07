@@ -18,5 +18,5 @@ This Youtube clone project was built using ReactJS as a front-end framework and 
 5. npm start
 
 [![](https://user-images.githubusercontent.com/8887734/128612400-457ff358-661c-47bb-a1e4-8c98bbeddd85.png)]()
-[![](https://user-images.githubusercontent.com/8887734/128612309-0f055a1a-91e0-4218-b6fa-562def4ba746.png)]()
+[![](https://user-images.githubusercontent.com/8887734/128612444-d6cc7caa-d7bb-4166-95c1-a87ec4619d69.png)]()
 [![](https://user-images.githubusercontent.com/8887734/128612298-d1f5c006-d570-49f5-8ede-4e995ec89776.png)]()
