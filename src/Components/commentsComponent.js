@@ -5,7 +5,6 @@ import PropTypes from 'prop-types';
 
 function CommentsComponent({ commentsArr }) {
     const comments = commentsArr.map((commentObj) => {
-        console.log('comments arr map');
         const { snippet } = commentObj.snippet.topLevelComment;
         return (
             <div

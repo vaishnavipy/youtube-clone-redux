@@ -32,7 +32,6 @@ export default function reducer(state = initState, action) {
                 commentsArr: action.commentsArr,
             };
         case 'FETCH_USER_SEARCH':
-            console.log('user', action.searchVideoArr);
             return {
                 ...state,
                 searchVideoArr: action.searchVideoArr,

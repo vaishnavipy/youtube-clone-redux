@@ -4,7 +4,6 @@ import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 
 function SearchComponent({ searchVideoArr }) {
-    console.log(searchVideoArr);
     const videos = searchVideoArr.map((videoObj) => {
         const { title, description, channelTitle, thumbnails } =
             videoObj.snippet;

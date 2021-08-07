@@ -18,6 +18,7 @@ function VideoComponent({
     statisticsArr,
     channelArr,
     fetchCommentsArr,
+    searchVideoArr,
 }) {
     const query = useQuery();
     const videoID = query.get('v');
@@ -39,9 +40,15 @@ function VideoComponent({
 
     useEffect(() => {
         if (videoArr.length && videoID) {
-            setVideoObj(videoArr.find((video) => video.id === videoID));
+            if (videoArr.find((video) => video.id === videoID)) {
+                setVideoObj(videoArr.find((video) => video.id === videoID));
+            } else {
+                setVideoObj(
+                    searchVideoArr.find((video) => video.id.videoId === videoID)
+                );
+            }
         }
-    }, [videoArr, videoID]);
+    }, [videoArr, videoID, searchVideoArr]);
 
     useEffect(() => {
         if (videoObj && videoObj.snippet) {
@@ -324,12 +331,14 @@ VideoComponent.propTypes = {
     statisticsArr: PropTypes.arrayOf.isRequired,
     channelArr: PropTypes.arrayOf.isRequired,
     fetchCommentsArr: PropTypes.func.isRequired,
+    searchVideoArr: PropTypes.arrayOf.isRequired,
 };
 
 const mapStateToProps = (state) => ({
     videoArr: state.videos,
     statisticsArr: state.statisticsArr,
     channelArr: state.channelArr,
+    searchVideoArr: state.searchVideoArr,
 });
 
 const mapDispatchToProps = (dispatch) => ({
