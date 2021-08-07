@@ -1,7 +1,7 @@
 export default function fetchUserSearch(searchInput) {
     return (dispatch) => {
         fetch(
-            `https://youtube.googleapis.com/youtube/v3/search?part=snippet&q=${searchInput}&key=AIzaSyA36P_bRr_9FJbH7iIKV2CJ5laogiQPzLY`
+            `https://youtube.googleapis.com/youtube/v3/search?part=snippet&q=${searchInput}&key=${process.env.REACT_APP_API_KEY}`
         )
             .then((response) => response.json())
             .then((data) => {
@@ -11,7 +11,7 @@ export default function fetchUserSearch(searchInput) {
                 });
                 data.items.forEach((videoObj) => {
                     fetch(
-                        `https://youtube.googleapis.com/youtube/v3/channels?part=snippet&id=${videoObj.snippet.channelId}&key=AIzaSyA36P_bRr_9FJbH7iIKV2CJ5laogiQPzLY`
+                        `https://youtube.googleapis.com/youtube/v3/channels?part=snippet&id=${videoObj.snippet.channelId}&key=${process.env.REACT_APP_API_KEY}`
                     )
                         .then((response) => response.json())
                         .then((channelData) => {
@@ -21,7 +21,7 @@ export default function fetchUserSearch(searchInput) {
                             });
                         });
                     fetch(
-                        `https://youtube.googleapis.com/youtube/v3/videos?part=statistics&id=${videoObj.id.videoId}&key=AIzaSyA36P_bRr_9FJbH7iIKV2CJ5laogiQPzLY`
+                        `https://youtube.googleapis.com/youtube/v3/videos?part=statistics&id=${videoObj.id.videoId}&key=${process.env.REACT_APP_API_KEY}`
                     )
                         .then((response) => response.json())
                         .then((statistics) => {
