@@ -17,6 +17,6 @@ This Youtube clone project was built using ReactJS as a front-end framework and 
 4. Do npm install, by doing this a latest version of package.json will be installed with your project 
 5. npm start
 
-[![](https://github.com/vaishnavipy/youtube-clone-redux/issues/new)]()
+[![](https://user-images.githubusercontent.com/8887734/128612400-457ff358-661c-47bb-a1e4-8c98bbeddd85.png)]()
 [![](https://user-images.githubusercontent.com/8887734/128612309-0f055a1a-91e0-4218-b6fa-562def4ba746.png)]()
 [![](https://user-images.githubusercontent.com/8887734/128612298-d1f5c006-d570-49f5-8ede-4e995ec89776.png)]()
