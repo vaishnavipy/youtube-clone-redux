@@ -9,6 +9,7 @@ This Youtube clone project was built using ReactJS as a front-end framework and 
 - Redux global state management
 - Material UI
 - Youtube API V3
+- React Router
 
 ### To install this project onto your local machine
 1. clone the respository $ git clone https://github.com/vaishnavipy/youtube-clone-redux.git
